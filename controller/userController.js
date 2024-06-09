@@ -2,7 +2,7 @@ const User = require("../models/User");
 const asyncMiddleware = require("../middleware/async");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { useParams } = require("react-router-dom");
+
 const TourGuide = require("../models/TourGuide");
 
 exports.detail = asyncMiddleware(async (req, res) => {
