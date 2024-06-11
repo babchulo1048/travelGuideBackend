@@ -11,6 +11,8 @@ router.get("/active", guideController.guideActive);
 
 router.get("/banned", guideController.guideBanned);
 
+router.get("/specific/:id", guideController.specificGuide);
+
 router.put("/manageBook/:id", guideController.managBooking);
 
 module.exports = router;

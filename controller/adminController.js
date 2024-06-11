@@ -8,20 +8,19 @@ const User = require("../models/User");
 exports.register = asyncMiddleware(async (req, res) => {
   const { name, email, password } = req.body;
 
-  // Check if the role is valid
-  // if (!["admin", "tourguide"].includes(role)) {
-  //   return res.status(400).json({ error: "Invalid role" });
-  // }
-
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const users = await User.find({ email: email });
+  if (users) {
+    return res
+      .status(400)
+      .json({ error: "User with this email already exist." });
+  }
+
+  console.log("users:", users);
+
   let user = new Admin({ name, email, password: hashedPassword });
-  // if (role === "admin") {
-  //   user = new Admin({ name, email, password: hashedPassword, role });
-  // } else {
-  //   user = new TourGuide({ name, email, password: hashedPassword, role });
-  // }
 
   await user.save();
 
@@ -81,7 +80,7 @@ exports.updateTourGuideStatus = asyncMiddleware(async (req, res) => {
 exports.updateUserStatus = asyncMiddleware(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  const user = await User.findByIdAndUpdate(id, { status }, { new: true });
+  const user = await User.finpdByIdAndUpdate(id, { status }, { new: true });
   if (!user) return res.status(404).json({ error: "User not found" });
   res.status(201).json(user);
 });

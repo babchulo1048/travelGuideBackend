@@ -17,6 +17,13 @@ exports.register = asyncMiddleware(async (req, res) => {
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const guides = await TourGuide.findOne({ email: email });
+  if (guides) {
+    return res
+      .status(400)
+      .json({ error: "TourGuides with this email already exist." });
+  }
+
   let user = new TourGuide({
     name,
     email,
@@ -38,7 +45,7 @@ exports.register = asyncMiddleware(async (req, res) => {
     expiresIn: process.env.EXPIREDIN,
   });
 
-  res.status(201).json({ user, token });
+  res.status(201).json({ user, name: user.name, token, id: user._id });
 });
 
 // Route to login
@@ -51,6 +58,8 @@ exports.login = asyncMiddleware(async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: "Invalid email or password" });
   }
+
+  console.log("user.status", user.status);
 
   // Check if user is banned
   if (user.status === "ban") {
@@ -91,6 +100,15 @@ exports.guideBanned = asyncMiddleware(async (req, res) => {
   const users = await TourGuide.find({ status: "ban" });
 
   res.status(201).json(users);
+});
+
+exports.specificGuide = asyncMiddleware(async (req, res) => {
+  const { id } = req.params;
+  const guide = await TourGuide.findById(id);
+  if (!guide) {
+    return res.status(404).json({ error: "Guide not found" });
+  }
+  res.status(200).json(guide);
 });
 
 exports.managBooking = asyncMiddleware(async (req, res) => {

@@ -148,31 +148,3 @@ exports.TopRatedPackages = asyncMiddleware(async (req, res) => {
     .slice(0, 3); // Get top 3 rated packages
   res.send(topRatedPackages);
 });
-
-// exports.TopRatedPackages = asyncMiddleware(async (req, res) => {
-//   // const sum =0
-//   // for (p in packages.length){
-//   //   sum += p.rating
-//   // }
-
-//   // const average = sum /packages.length
-//   // const packages = await Package.find({lte:{average}});
-
-//   // const packages = await Package.find({});
-
-//   // res.send(packages);
-
-//   const packages = await Package.find({});
-//   let sum = 0;
-//   for (const p of packages) {
-//     sum += p.rating;
-//   }
-//   const average = Math.floor(sum / packages.length);
-
-//   console.log("average:", average);
-
-//   // Fetch packages with ratings above the average
-//   const topRatedPackages = await Package.find({ rating: { $gte: average } });
-
-//   res.send(topRatedPackages);
-// });

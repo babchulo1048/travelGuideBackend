@@ -5,6 +5,7 @@ router.use(express.json());
 
 router.get("/active", userController.userActive);
 router.get("/banned", userController.userBanned);
+router.get("/specific/:id", userController.specific);
 
 router.get("/:id", userController.detail);
 router.post("/register", userController.register);

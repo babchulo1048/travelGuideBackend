@@ -13,10 +13,27 @@ exports.detail = asyncMiddleware(async (req, res) => {
   res.status(201).json(user);
 });
 
+exports.specific = asyncMiddleware(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  res.status(200).json(user);
+});
+
 exports.register = asyncMiddleware(async (req, res) => {
   const { username, name, password, email, contactInformation } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
+
+  const users = await User.find({ email: email });
+  if (users) {
+    return res
+      .status(400)
+      .json({ error: "User with this email already exist." });
+  }
+
   let user = new User({
     username,
     name,
@@ -40,6 +57,13 @@ exports.login = asyncMiddleware(async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(401).json({ error: "Invalid email or password" });
+  }
+
+  if (user.status === "ban") {
+    return res.status(403).json({
+      error:
+        "Your account has been banned. Please contact support for further assistance.",
+    });
   }
 
   // Compare passwords
